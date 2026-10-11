@@ -3,6 +3,7 @@
 #include <cmath>
 #include <limits>
 #include <numbers>
+#include <random>
 
 namespace lightrail {
 
@@ -26,5 +27,16 @@ inline constexpr double kDeg45 = kPi / 4.0;
 inline constexpr double kDeg60 = kPi / 3.0;
 inline constexpr double kDeg90 = kPi / 2.0;
 inline constexpr double kDeg180 = kPi;
+
+// Thread-safe fast uniform random number generation in [0.0, 1.0)
+inline double random_double() noexcept {
+    thread_local std::mt19937_64 generator(std::random_device{}());
+    thread_local std::uniform_real_distribution<double> distribution(0.0, 1.0);
+    return distribution(generator);
+}
+
+inline double random_double(double min, double max) noexcept {
+    return min + (max - min) * random_double();
+}
 
 } // namespace lightrail

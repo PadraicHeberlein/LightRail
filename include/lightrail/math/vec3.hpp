@@ -163,6 +163,31 @@ constexpr Vec3 lerp(const Vec3& a, const Vec3& b, double t) noexcept {
     return (1.0 - t) * a + t * b;
 }
 
+// Random vector generation within unit sphere
+inline Vec3 random_in_unit_sphere() noexcept {
+    while (true) {
+        Vec3 p(random_double(-1.0, 1.0), random_double(-1.0, 1.0), random_double(-1.0, 1.0));
+        if (p.length_squared() < 1.0) {
+            return p;
+        }
+    }
+}
+
+// Random unit vector on unit sphere surface
+inline Vec3 random_unit_vector() noexcept {
+    return unit_vector(random_in_unit_sphere());
+}
+
+// Random vector within unit 2D disk (used for depth-of-field defocus blur)
+inline Vec3 random_in_unit_disk() noexcept {
+    while (true) {
+        Vec3 p(random_double(-1.0, 1.0), random_double(-1.0, 1.0), 0.0);
+        if (p.length_squared() < 1.0) {
+            return p;
+        }
+    }
+}
+
 // Stream insertion
 inline std::ostream& operator<<(std::ostream& out, const Vec3& v) {
     return out << '(' << v.x << ", " << v.y << ", " << v.z << ')';
