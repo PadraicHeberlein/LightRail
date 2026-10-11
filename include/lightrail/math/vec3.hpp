@@ -1,196 +1,85 @@
 #pragma once
 
-#include <cmath>
-#include <iostream>
+#include <iosfwd>
 #include "lightrail/math/constants.hpp"
 
 namespace lightrail {
 
+/**
+ * @brief 3D Vector representation for geometric and physical calculations.
+ */
 struct Vec3 {
     double x{0.0};
     double y{0.0};
     double z{0.0};
 
+    // Constructors
     constexpr Vec3() noexcept = default;
     constexpr Vec3(double x, double y, double z) noexcept : x(x), y(y), z(z) {}
 
-    // Coordinate access via index
-    constexpr double operator[](std::size_t i) const noexcept {
-        return (i == 0) ? x : (i == 1) ? y : z;
-    }
-
-    constexpr double& operator[](std::size_t i) noexcept {
-        return (i == 0) ? x : (i == 1) ? y : z;
-    }
-
-    // Unary negation
-    constexpr Vec3 operator-() const noexcept {
-        return Vec3(-x, -y, -z);
-    }
-
-    // Compound assignment operators
-    constexpr Vec3& operator+=(const Vec3& v) noexcept {
-        x += v.x;
-        y += v.y;
-        z += v.z;
-        return *this;
-    }
-
-    constexpr Vec3& operator-=(const Vec3& v) noexcept {
-        x -= v.x;
-        y -= v.y;
-        z -= v.z;
-        return *this;
-    }
-
-    constexpr Vec3& operator*=(double s) noexcept {
-        x *= s;
-        y *= s;
-        z *= s;
-        return *this;
-    }
-
-    constexpr Vec3& operator*=(const Vec3& v) noexcept {
-        x *= v.x;
-        y *= v.y;
-        z *= v.z;
-        return *this;
-    }
-
-    constexpr Vec3& operator/=(double s) noexcept {
-        return *this *= (1.0 / s);
-    }
-
-    // Length and magnitude operations
-    constexpr double length_squared() const noexcept {
-        return x * x + y * y + z * z;
-    }
-
-    double length() const noexcept {
-        return std::sqrt(length_squared());
-    }
-
-    // Equality comparison with tolerance
-    constexpr bool approx_equal(const Vec3& other, double eps = kEpsilon) const noexcept {
-        return std::abs(x - other.x) < eps &&
-               std::abs(y - other.y) < eps &&
-               std::abs(z - other.z) < eps;
-    }
-
-    // Common basis vectors
+    // Static factories
     static constexpr Vec3 zero() noexcept { return Vec3(0.0, 0.0, 0.0); }
     static constexpr Vec3 unit_x() noexcept { return Vec3(1.0, 0.0, 0.0); }
     static constexpr Vec3 unit_y() noexcept { return Vec3(0.0, 1.0, 0.0); }
     static constexpr Vec3 unit_z() noexcept { return Vec3(0.0, 0.0, 1.0); }
+
+    // Magnitude & normalization methods
+    double length() const;
+    double length_squared() const;
+    bool approx_equal(const Vec3& other, double epsilon = kEpsilon) const;
+
+    // Compound assignment operators
+    Vec3& operator+=(const Vec3& other);
+    Vec3& operator-=(const Vec3& other);
+    Vec3& operator*=(double s);
+    Vec3& operator/=(double s);
+
+    // Unary negation
+    Vec3 operator-() const;
 };
 
-// Aliasing Point3 to Vec3 for spatial points in 3D
+// Aliases
 using Point3 = Vec3;
 
-// Binary arithmetic operators
-constexpr Vec3 operator+(const Vec3& u, const Vec3& v) noexcept {
-    return Vec3(u.x + v.x, u.y + v.y, u.z + v.z);
-}
+// Vector arithmetic operators
+Vec3 operator+(const Vec3& a, const Vec3& b);
+Vec3 operator-(const Vec3& a, const Vec3& b);
+Vec3 operator*(const Vec3& a, const Vec3& b); // Component-wise (Hadamard) product
+Vec3 operator*(double s, const Vec3& v);
+Vec3 operator*(const Vec3& v, double s);
+Vec3 operator/(const Vec3& v, double s);
 
-constexpr Vec3 operator-(const Vec3& u, const Vec3& v) noexcept {
-    return Vec3(u.x - v.x, u.y - v.y, u.z - v.z);
-}
+// Vector products & operations
+double dot(const Vec3& a, const Vec3& b);
+Vec3 cross(const Vec3& a, const Vec3& b);
+Vec3 unit_vector(const Vec3& v);
 
-// Component-wise multiplication (Hadamard product - great for color filtering)
-constexpr Vec3 operator*(const Vec3& u, const Vec3& v) noexcept {
-    return Vec3(u.x * v.x, u.y * v.y, u.z * v.z);
-}
+bool is_parallel(const Vec3& a, const Vec3& b);
+bool is_perpendicular(const Vec3& a, const Vec3& b);
 
-constexpr Vec3 operator*(double s, const Vec3& v) noexcept {
-    return Vec3(s * v.x, s * v.y, s * v.z);
-}
+/**
+ * @brief Computes mirror reflection of vector v off surface with normal n.
+ * Formula: v - 2 * dot(v, n) * n
+ */
+Vec3 reflect(const Vec3& v, const Vec3& normal);
 
-constexpr Vec3 operator*(const Vec3& v, double s) noexcept {
-    return s * v;
-}
+/**
+ * @brief Computes Snell's refraction of unit vector uv through surface with normal n.
+ */
+Vec3 refract(const Vec3& uv, const Vec3& n, double etai_over_etat);
 
-constexpr Vec3 operator/(const Vec3& v, double s) noexcept {
-    return (1.0 / s) * v;
-}
+/**
+ * @brief Linear interpolation between two vectors.
+ * Formula: (1 - t) * a + t * b
+ */
+Vec3 lerp(const Vec3& a, const Vec3& b, double t);
 
-// Vector operations
-constexpr double dot(const Vec3& u, const Vec3& v) noexcept {
-    return u.x * v.x + u.y * v.y + u.z * v.z;
-}
+// Spatial stochastic sampling
+Vec3 random_in_unit_sphere();
+Vec3 random_unit_vector();
+Vec3 random_in_unit_disk();
 
-constexpr Vec3 cross(const Vec3& u, const Vec3& v) noexcept {
-    return Vec3(
-        u.y * v.z - u.z * v.y,
-        u.z * v.x - u.x * v.z,
-        u.x * v.y - u.y * v.x
-    );
-}
-
-inline Vec3 unit_vector(const Vec3& v) noexcept {
-    double len = v.length();
-    return (len > 0.0) ? (v / len) : Vec3::zero();
-}
-
-// Ray reflection: reflects ray v against surface normal n
-// Note: Assumes n is a unit vector
-constexpr Vec3 reflect(const Vec3& v, const Vec3& n) noexcept {
-    return v - 2.0 * dot(v, n) * n;
-}
-
-// Refraction following Snell's Law
-inline Vec3 refract(const Vec3& uv, const Vec3& n, double etai_over_etat) noexcept {
-    double cos_theta = std::fmin(dot(-uv, n), 1.0);
-    Vec3 r_out_perp = etai_over_etat * (uv + cos_theta * n);
-    Vec3 r_out_parallel = -std::sqrt(std::abs(1.0 - r_out_perp.length_squared())) * n;
-    return r_out_perp + r_out_parallel;
-}
-
-// Semantic checks from original C# codebase
-constexpr bool is_zero(const Vec3& v, double eps = kEpsilon) noexcept {
-    return std::abs(v.x) < eps && std::abs(v.y) < eps && std::abs(v.z) < eps;
-}
-
-constexpr bool is_parallel(const Vec3& u, const Vec3& v, double eps = kEpsilon) noexcept {
-    return is_zero(cross(u, v), eps);
-}
-
-constexpr bool is_perpendicular(const Vec3& u, const Vec3& v, double eps = kEpsilon) noexcept {
-    return std::abs(dot(u, v)) < eps;
-}
-
-// Linear interpolation
-constexpr Vec3 lerp(const Vec3& a, const Vec3& b, double t) noexcept {
-    return (1.0 - t) * a + t * b;
-}
-
-// Random vector generation within unit sphere
-inline Vec3 random_in_unit_sphere() noexcept {
-    while (true) {
-        Vec3 p(random_double(-1.0, 1.0), random_double(-1.0, 1.0), random_double(-1.0, 1.0));
-        if (p.length_squared() < 1.0) {
-            return p;
-        }
-    }
-}
-
-// Random unit vector on unit sphere surface
-inline Vec3 random_unit_vector() noexcept {
-    return unit_vector(random_in_unit_sphere());
-}
-
-// Random vector within unit 2D disk (used for depth-of-field defocus blur)
-inline Vec3 random_in_unit_disk() noexcept {
-    while (true) {
-        Vec3 p(random_double(-1.0, 1.0), random_double(-1.0, 1.0), 0.0);
-        if (p.length_squared() < 1.0) {
-            return p;
-        }
-    }
-}
-
-// Stream insertion
-inline std::ostream& operator<<(std::ostream& out, const Vec3& v) {
-    return out << '(' << v.x << ", " << v.y << ", " << v.z << ')';
-}
+// Stream output
+std::ostream& operator<<(std::ostream& os, const Vec3& v);
 
 } // namespace lightrail

@@ -1,15 +1,15 @@
 #pragma once
 
-#include <algorithm>
 #include <array>
-#include <cmath>
 #include <cstdint>
-#include <iostream>
 #include "lightrail/math/vec3.hpp"
 
 namespace lightrail {
 
-// Color represented as floating point (R, G, B) components, typically in [0.0, 1.0]
+/**
+ * @brief Floating-point RGB color representation.
+ * Components r, g, b typically reside in [0.0, 1.0] for standard dynamic range.
+ */
 struct Color {
     double r{0.0};
     double g{0.0};
@@ -19,84 +19,31 @@ struct Color {
     constexpr Color(double r, double g, double b) noexcept : r(r), g(g), b(b) {}
     constexpr explicit Color(const Vec3& v) noexcept : r(v.x), g(v.y), b(v.z) {}
 
-    constexpr Vec3 to_vec3() const noexcept {
-        return Vec3(r, g, b);
-    }
+    Vec3 to_vec3() const;
 
-    constexpr Color& operator+=(const Color& c) noexcept {
-        r += c.r;
-        g += c.g;
-        b += c.b;
-        return *this;
-    }
+    Color& operator+=(const Color& c);
+    Color& operator*=(double s);
+    Color& operator*=(const Color& c);
 
-    constexpr Color& operator*=(double s) noexcept {
-        r *= s;
-        g *= s;
-        b *= s;
-        return *this;
-    }
+    /**
+     * @brief Converts linear floating-point color to gamma-corrected 8-bit RGB integers in [0, 255].
+     * @param gamma_correct When true, applies gamma = 2.0 (square root approximation) for display output.
+     * @return std::array<uint8_t, 3> containing {red, green, blue} bytes.
+     */
+    std::array<uint8_t, 3> to_rgb8(bool gamma_correct = true) const;
 
-    constexpr Color& operator*=(const Color& c) noexcept {
-        r *= c.r;
-        g *= c.g;
-        b *= c.b;
-        return *this;
-    }
-
-    // Convert linear color to gamma-corrected 8-bit RGB [0, 255]
-    // Uses standard gamma = 2.0 (square root approximation) for realistic brightness
-    std::array<uint8_t, 3> to_rgb8(bool gamma_correct = true) const noexcept {
-        double red   = r;
-        double green = g;
-        double blue  = b;
-
-        // Replace NaNs with zero
-        if (std::isnan(red))   red   = 0.0;
-        if (std::isnan(green)) green = 0.0;
-        if (std::isnan(blue))  blue  = 0.0;
-
-        if (gamma_correct) {
-            red   = (red > 0.0)   ? std::sqrt(red)   : 0.0;
-            green = (green > 0.0) ? std::sqrt(green) : 0.0;
-            blue  = (blue > 0.0)  ? std::sqrt(blue)  : 0.0;
-        }
-
-        // Clamp to [0.0, 0.999] and scale to [0, 255]
-        auto to_byte = [](double val) noexcept -> uint8_t {
-            double clamped = std::clamp(val, 0.0, 0.999);
-            return static_cast<uint8_t>(256.0 * clamped);
-        };
-
-        return {to_byte(red), to_byte(green), to_byte(blue)};
-    }
-
-    // Preset palette colors
+    // Palette constants
     static constexpr Color black() noexcept { return Color(0.0, 0.0, 0.0); }
     static constexpr Color white() noexcept { return Color(1.0, 1.0, 1.0); }
-    static constexpr Color red()   noexcept { return Color(1.0, 0.0, 0.0); }
+    static constexpr Color red() noexcept   { return Color(1.0, 0.0, 0.0); }
     static constexpr Color green() noexcept { return Color(0.0, 1.0, 0.0); }
-    static constexpr Color blue()  noexcept { return Color(0.0, 0.0, 1.0); }
+    static constexpr Color blue() noexcept  { return Color(0.0, 0.0, 1.0); }
 };
 
-constexpr Color operator+(const Color& c1, const Color& c2) noexcept {
-    return Color(c1.r + c2.r, c1.g + c2.g, c1.b + c2.b);
-}
-
-constexpr Color operator-(const Color& c1, const Color& c2) noexcept {
-    return Color(c1.r - c2.r, c1.g - c2.g, c1.b - c2.b);
-}
-
-constexpr Color operator*(const Color& c1, const Color& c2) noexcept {
-    return Color(c1.r * c2.r, c1.g * c2.g, c1.b * c2.b);
-}
-
-constexpr Color operator*(double s, const Color& c) noexcept {
-    return Color(s * c.r, s * c.g, s * c.b);
-}
-
-constexpr Color operator*(const Color& c, double s) noexcept {
-    return s * c;
-}
+// Color operations
+Color operator+(const Color& c1, const Color& c2);
+Color operator*(double s, const Color& c);
+Color operator*(const Color& c, double s);
+Color operator*(const Color& c1, const Color& c2); // Hadamard modulation
 
 } // namespace lightrail

@@ -1,6 +1,7 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
+#include <stdexcept>
 #include "lightrail/math/constants.hpp"
 #include "lightrail/math/mat3.hpp"
 #include "lightrail/math/ray.hpp"
@@ -9,7 +10,7 @@
 using namespace lightrail;
 
 void test_vec3() {
-    std::cout << "[Test] Vec3 operations... ";
+    std::cout << "[Test] Vec3 operations...\n";
 
     Vec3 a(1.0, 2.0, 3.0);
     Vec3 b(4.0, 5.0, 6.0);
@@ -43,21 +44,21 @@ void test_vec3() {
     Vec3 reflected = reflect(incident, normal);
     assert(reflected.approx_equal(Vec3(1.0, 1.0, 0.0)));
 
-    std::cout << "PASSED\n";
+    std::cout << "  -> Vec3 PASSED\n";
 }
 
 void test_ray() {
-    std::cout << "[Test] Ray parametric evaluation... ";
+    std::cout << "[Test] Ray parametric evaluation...\n";
 
     Ray r(Point3(0.0, 0.0, 0.0), Vec3(0.0, 0.0, -1.0));
     Point3 p = r.at(5.0);
     assert(p.approx_equal(Point3(0.0, 0.0, -5.0)));
 
-    std::cout << "PASSED\n";
+    std::cout << "  -> Ray PASSED\n";
 }
 
 void test_mat3() {
-    std::cout << "[Test] Mat3 operations, determinant, and inverse... ";
+    std::cout << "[Test] Mat3 operations, determinant, and inverse...\n";
 
     Mat3 I = Mat3::identity();
     Vec3 v(3.0, 4.0, 5.0);
@@ -90,16 +91,22 @@ void test_mat3() {
     Vec3 rotated_z = ry * Vec3::unit_z();
     assert(rotated_z.approx_equal(Vec3::unit_x()));
 
-    std::cout << "PASSED\n";
+    std::cout << "  -> Mat3 PASSED\n";
 }
 
 int main() {
-    std::cout << "Running LightRail Math Foundation Tests\n";
     std::cout << "======================================\n";
-    test_vec3();
-    test_ray();
-    test_mat3();
+    std::cout << "  LightRail Math Foundation Tests     \n";
     std::cout << "======================================\n";
-    std::cout << "All math tests passed successfully!\n";
-    return 0;
+    try {
+        test_vec3();
+        test_ray();
+        test_mat3();
+        std::cout << "======================================\n";
+        std::cout << "All math tests passed successfully!\n";
+        return 0;
+    } catch (const std::logic_error& e) {
+        std::cerr << "\n[Next Step to Implement]: " << e.what() << "\n";
+        return 1;
+    }
 }

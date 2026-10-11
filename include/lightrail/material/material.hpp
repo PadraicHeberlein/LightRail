@@ -1,6 +1,8 @@
 #pragma once
 
 #include "lightrail/image/color.hpp"
+#include "lightrail/math/ray.hpp"
+#include "lightrail/scene/hit_record.hpp"
 
 namespace lightrail {
 
@@ -9,7 +11,9 @@ enum class MaterialType {
     Dielectric   // Transparent refractive glass/water with Fresnel reflectance
 };
 
-// Surface illumination and scattering material
+/**
+ * @brief Surface illumination and scattering material parameters.
+ */
 struct Material {
     MaterialType type{MaterialType::Phong};
     Color albedo{0.8, 0.8, 0.8};
@@ -25,11 +29,10 @@ struct Material {
     double ior{1.5};          // Index of refraction (e.g. 1.0 air, 1.33 water, 1.5 glass, 2.4 diamond)
 
     constexpr Material() noexcept = default;
-
     constexpr Material(const Color& albedo, double ka, double kd, double ks, double shininess, double reflectivity = 0.0) noexcept
         : type(MaterialType::Phong), albedo(albedo), ka(ka), kd(kd), ks(ks), shininess(shininess), reflectivity(reflectivity), ior(1.0) {}
 
-    // Convenience constructors
+    // Factory helpers
     static constexpr Material diffuse(const Color& albedo) noexcept {
         return Material(albedo, 0.1, 0.8, 0.1, 16.0, 0.0);
     }
@@ -42,7 +45,6 @@ struct Material {
         return Material(Color(1.0, 1.0, 1.0), 0.05, 0.1, 0.9, 128.0, reflectivity);
     }
 
-    // Glass / Dielectric material
     static constexpr Material glass(double index_of_refraction = 1.5, const Color& attenuation = Color(1.0, 1.0, 1.0)) noexcept {
         Material m;
         m.type = MaterialType::Dielectric;
@@ -51,12 +53,22 @@ struct Material {
         return m;
     }
 
-    // Schlick's approximation for Fresnel reflectance
-    static double reflectance(double cosine, double ref_idx) noexcept {
-        double r0 = (1.0 - ref_idx) / (1.0 + ref_idx);
-        r0 = r0 * r0;
-        return r0 + (1.0 - r0) * std::pow(1.0 - cosine, 5.0);
-    }
+    /**
+     * @brief Evaluates ray scattering (reflection or refraction) off material surface.
+     * @param r_in Incident ray.
+     * @param rec Surface intersection metadata.
+     * @param attenuation Color modulation along scattered path.
+     * @param scattered Output reflected or refracted ray.
+     * @return true if ray scatters, false if absorbed.
+     */
+    bool scatter(const Ray& r_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const;
+
+    /**
+     * @brief Computes Schlick's polynomial approximation for Fresnel reflectance.
+     * Formula: R(theta) = R0 + (1 - R0) * (1 - cos(theta))^5
+     * where R0 = ((n1 - n2) / (n1 + n2))^2
+     */
+    static double reflectance_schlick(double cosine, double ref_idx);
 };
 
 } // namespace lightrail

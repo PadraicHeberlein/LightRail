@@ -1,12 +1,14 @@
 #pragma once
 
-#include <cmath>
-#include "lightrail/math/constants.hpp"
 #include "lightrail/math/ray.hpp"
 #include "lightrail/math/vec3.hpp"
 
 namespace lightrail {
 
+/**
+ * @brief Perspective Camera model supporting field-of-view, look-at targeting,
+ * sub-pixel anti-aliasing jitter, and thin-lens defocus blur (depth of field).
+ */
 class Camera {
 public:
     Point3 origin;
@@ -26,68 +28,29 @@ public:
            double vfov_degrees,
            double aspect_ratio,
            double defocus_angle = 0.0,
-           double focus_dist = 10.0)
-        : defocus_angle(defocus_angle), focus_dist(focus_dist) {
-        origin = look_from;
+           double focus_dist = 10.0);
 
-        // Viewport dimensions at the focus plane
-        double theta = deg_to_rad(vfov_degrees);
-        double h = std::tan(theta / 2.0);
-        double viewport_height = 2.0 * h * focus_dist;
-        double viewport_width = aspect_ratio * viewport_height;
+    /**
+     * @brief Computes pixel grid delta vectors given image resolution.
+     */
+    void initialize_for_resolution(int width, int height);
 
-        // Camera coordinate frame orthonormal basis (u, v, w)
-        w_ = unit_vector(look_from - look_at);
-        u_ = unit_vector(cross(vup, w_));
-        v_ = cross(w_, u_);
-
-        // Vectors across horizontal and down vertical viewport edges
-        Vec3 viewport_u = viewport_width * u_;
-        Vec3 viewport_v = -viewport_height * v_;
-
-        // Upper-left corner of viewport positioned at focus_dist
-        Point3 viewport_upper_left = origin - (focus_dist * w_) - (viewport_u / 2.0) - (viewport_v / 2.0);
-
-        this->viewport_upper_left_ = viewport_upper_left;
-        this->viewport_u_ = viewport_u;
-        this->viewport_v_ = viewport_v;
-
-        // Calculate lens disk radius for depth of field
-        double defocus_radius = focus_dist * std::tan(deg_to_rad(defocus_angle / 2.0));
-        defocus_disk_u = u_ * defocus_radius;
-        defocus_disk_v = v_ * defocus_radius;
-    }
-
-    void initialize_for_resolution(int width, int height) noexcept {
-        pixel_delta_u = viewport_u_ / static_cast<double>(width);
-        pixel_delta_v = viewport_v_ / static_cast<double>(height);
-        pixel00_loc = viewport_upper_left_ + 0.5 * (pixel_delta_u + pixel_delta_v);
-    }
-
-    // Generate ray through pixel (x, y) with sub-pixel jitter for anti-aliasing
-    // and thin-lens sampling for defocus blur
-    Ray get_ray(double x, double y, bool jitter = true) const noexcept {
-        double offset_x = jitter ? (random_double() - 0.5) : 0.0;
-        double offset_y = jitter ? (random_double() - 0.5) : 0.0;
-
-        Point3 pixel_sample = pixel00_loc + ((x + offset_x) * pixel_delta_u) + ((y + offset_y) * pixel_delta_v);
-
-        Point3 ray_origin = (defocus_angle <= 0.0) ? origin : sample_defocus_disk();
-        Vec3 ray_direction = unit_vector(pixel_sample - ray_origin);
-
-        return Ray(ray_origin, ray_direction);
-    }
+    /**
+     * @brief Generates a ray passing through pixel (x, y).
+     * @param x Horizontal pixel index.
+     * @param y Vertical pixel index.
+     * @param sample_jitter When true, adds uniform sub-pixel jitter in [-0.5, 0.5] for anti-aliasing.
+     * @return Generated primary Ray in world space.
+     */
+    Ray get_ray(double x, double y, bool sample_jitter = false) const;
 
 private:
-    Point3 sample_defocus_disk() const noexcept {
-        Vec3 p = random_in_unit_disk();
-        return origin + (p.x * defocus_disk_u) + (p.y * defocus_disk_v);
-    }
-
     Vec3 u_, v_, w_;
     Point3 viewport_upper_left_;
     Vec3 viewport_u_;
     Vec3 viewport_v_;
+
+    Point3 sample_defocus_disk() const;
 };
 
 } // namespace lightrail

@@ -7,43 +7,27 @@
 
 namespace lightrail {
 
+/**
+ * @brief Scene container storing hittable geometry objects and illumination sources.
+ */
 class Scene : public Hittable {
 public:
     std::vector<std::shared_ptr<Hittable>> objects;
     std::vector<Light> lights;
-    Color ambient_light{0.05, 0.05, 0.08};
-    Color background_color{0.05, 0.07, 0.12}; // Subtle dark sky background
+    Color ambient_light{0.08, 0.08, 0.10};
+    Color background_color{0.05, 0.07, 0.12};
 
     Scene() = default;
 
-    void add(std::shared_ptr<Hittable> object) {
-        objects.push_back(std::move(object));
-    }
+    void add(std::shared_ptr<Hittable> object);
+    void add_light(const Light& light);
+    void clear();
 
-    void add_light(const Light& light) {
-        lights.push_back(light);
-    }
-
-    void clear() noexcept {
-        objects.clear();
-        lights.clear();
-    }
-
-    bool hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const override {
-        HitRecord temp_rec;
-        bool hit_anything = false;
-        double closest_so_far = t_max;
-
-        for (const auto& object : objects) {
-            if (object->hit(r, t_min, closest_so_far, temp_rec)) {
-                hit_anything = true;
-                closest_so_far = temp_rec.t;
-                rec = temp_rec;
-            }
-        }
-
-        return hit_anything;
-    }
+    /**
+     * @brief Evaluates ray intersection against all objects in the scene,
+     * recording the closest valid hit within [t_min, t_max].
+     */
+    bool hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const override;
 };
 
 } // namespace lightrail
