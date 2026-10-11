@@ -1,0 +1,16 @@
+# Build artifacts
+build/
+bin/
+*.o
+*.a
+*.so
+
+# Output image renders
+*.ppm
+*.bmp
+*.png
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
