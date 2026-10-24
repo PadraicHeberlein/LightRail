@@ -1,4 +1,5 @@
 #include "lightrail/math/mat3.hpp"
+#include "lightrail/math/quaternion.hpp"
 #include <stdexcept>
 
 namespace lightrail {
@@ -7,6 +8,14 @@ Mat3::Mat3() {
     for (int r = 0; r < 3; ++r) {
         for (int c = 0; c < 3; ++c) {
             m[r][c] = 0.0;
+        }
+    }
+}
+
+Mat3::Mat3(double diag) {
+    for (int r = 0; r < 3; ++r) {
+        for (int c = 0; c < 3; ++c) {
+            m[r][c] = (r == c) ? diag : 0.0;
         }
     }
 }
@@ -22,6 +31,10 @@ Mat3::Mat3(double m00, double m01, double m02,
 Mat3 Mat3::identity() {
     // TODO: Implement 3x3 identity matrix (diagonal 1.0, off-diagonal 0.0)
     throw std::logic_error("Not implemented: Mat3::identity()");
+}
+
+Mat3 Mat3::zero() {
+    return Mat3(0.0);
 }
 
 Mat3 Mat3::rotation_x(double radians) {
@@ -46,6 +59,10 @@ Mat3 Mat3::rotation_z(double radians) {
     // [ sin(theta)   cos(theta)  0 ]
     // [     0            0       1 ]
     throw std::logic_error("Not implemented: Mat3::rotation_z(radians)");
+}
+
+Mat3 Mat3::from_quaternion(const Quaternion& q) {
+    throw std::logic_error("Not implemented: Mat3::from_quaternion");
 }
 
 Vec3 Mat3::row(int r) const {
@@ -77,6 +94,14 @@ std::optional<Mat3> Mat3::inverse() const {
     throw std::logic_error("Not implemented: Mat3::inverse()");
 }
 
+Quaternion Mat3::to_quaternion() const {
+    throw std::logic_error("Not implemented: Mat3::to_quaternion");
+}
+
+Mat3 Mat3::operator-() const {
+    throw std::logic_error("Not implemented: Mat3::operator-");
+}
+
 Mat3 Mat3::operator+(const Mat3& other) const {
     // TODO: Implement component-wise matrix addition
     throw std::logic_error("Not implemented: Mat3::operator+");
@@ -102,8 +127,24 @@ Mat3 Mat3::operator*(double s) const {
     throw std::logic_error("Not implemented: Mat3::operator*(double)");
 }
 
+Mat3 Mat3::operator/(double s) const {
+    throw std::logic_error("Not implemented: Mat3::operator/(double)");
+}
+
+bool Mat3::operator==(const Mat3& other) const {
+    throw std::logic_error("Not implemented: Mat3::operator==");
+}
+
+bool Mat3::operator!=(const Mat3& other) const {
+    return !(*this == other);
+}
+
 Mat3 operator*(double s, const Mat3& mat) {
     return mat * s;
+}
+
+double norm(const Mat3& mat) {
+    throw std::logic_error("Not implemented: norm(Mat3)");
 }
 
 } // namespace lightrail

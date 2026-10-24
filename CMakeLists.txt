@@ -18,6 +18,9 @@ set(LIGHTRAIL_CORE_SOURCES
     src/math/vec3.cpp
     src/math/mat3.cpp
     src/math/ray.cpp
+    src/math/complex.cpp
+    src/math/quaternion.cpp
+    src/math/algebra_functions.cpp
     src/image/color.cpp
     src/image/image.cpp
     src/scene/hit_record.cpp
@@ -38,6 +41,10 @@ target_include_directories(lightrail_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/inc
 # Math verification tests
 add_executable(test_math tests/test_math.cpp)
 target_link_libraries(test_math PRIVATE lightrail_core)
+
+# Abstract algebra tests
+add_executable(test_algebra tests/test_algebra.cpp)
+target_link_libraries(test_algebra PRIVATE lightrail_core)
 
 # Main ray tracer executable
 add_executable(lightrail src/main.cpp)
