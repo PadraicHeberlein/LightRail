@@ -5,13 +5,11 @@
 namespace lightrail {
 
 double Vec3::length() const {
-    // TODO: Implement vector length: sqrt(length_squared())
-    throw std::logic_error("Not implemented: Vec3::length()");
+
 }
 
 double Vec3::length_squared() const {
-    // TODO: Implement squared length: x*x + y*y + z*z
-    throw std::logic_error("Not implemented: Vec3::length_squared()");
+    return x*x + y*y + z*z;
 }
 
 bool Vec3::approx_equal(const Vec3& other, double epsilon) const {
