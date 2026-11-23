@@ -28,7 +28,9 @@ struct Vec3 {
     [[nodiscard]] double length_squared() const;
     [[nodiscard]] bool approx_equal(const Vec3& other, double epsilon = kEpsilon) const;
 
-    constexpr bool operator==(const Vec3&) const noexcept = default;
+    constexpr bool operator==(const Vec3& other) const noexcept {
+        return x == other.x && y == other.y && z == other.z;
+    }
 
     // Compound assignment operators
     Vec3& operator+=(const Vec3& other);
