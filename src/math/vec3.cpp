@@ -1,6 +1,6 @@
 #include "lightrail/math/vec3.hpp"
 #include <iostream>
-#include <stdexcept>
+#include <cmath>
 
 namespace lightrail {
 
@@ -9,10 +9,10 @@ double Vec3::length() const {
 }
 
 double Vec3::length_squared() const {
-    return x*x + y*y + z*z;
+    return x * x + y * y + z * z;
 }
 
-bool Vec3::approx_equal(const Vec3& other, double epsilon = kEpsilon) const {
+bool Vec3::approx_equal(const Vec3& other, double epsilon) const {
     return std::abs(x - other.x) < epsilon &&
            std::abs(y - other.y) < epsilon &&
            std::abs(z - other.z) < epsilon;
@@ -91,7 +91,7 @@ Vec3 unit_vector(const Vec3& v) {
 }
 
 bool is_parallel(const Vec3& a, const Vec3& b) {
-    return cross(a, b).length_squared() < kEpsilon * kEpsilon;
+    return cross(a, b).length_squared() <= kEpsilon * kEpsilon * a.length_squared() * b.length_squared();
 }
 
 bool is_perpendicular(const Vec3& a, const Vec3& b) {
@@ -99,7 +99,7 @@ bool is_perpendicular(const Vec3& a, const Vec3& b) {
 }
 
 Vec3 reflect(const Vec3& v, const Vec3& normal) {
-    return v - 2 * dot(v, normal) * normal;
+    return v - 2.0 * dot(v, normal) * normal;
 }
 
 Vec3 refract(const Vec3& uv, const Vec3& n, double etai_over_etat) {
@@ -110,14 +110,15 @@ Vec3 refract(const Vec3& uv, const Vec3& n, double etai_over_etat) {
 }
 
 Vec3 lerp(const Vec3& a, const Vec3& b, double t) {
-    return (1 - t) * a + t * b;
+    return (1.0 - t) * a + t * b;
 }
 
 Vec3 random_in_unit_sphere() {
     while (true) {
-        Vec3 p = Vec3(random_double(-1.0, 1.0), random_double(-1.0, 1.0), random_double(-1.0, 1.0));
-        if (p.length_squared() < 1.0) {
-            return p;
+        Vec3 p(random_double(-1.0, 1.0), random_double(-1.0, 1.0), random_double(-1.0, 1.0));
+        double len_sq = p.length_squared();
+        if (1e-160 < len_sq && len_sq <= 1.0) {
+            return p / std::sqrt(len_sq);
         }
     }
 }
