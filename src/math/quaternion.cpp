@@ -1,9 +1,10 @@
+#include <cmath>
 #include <iostream>
 #include <stdexcept>
-#include <cmath>
 
-#include "lightrail/math/quaternion.hpp"
 #include "lightrail/math/mat3.hpp"
+#include "lightrail/math/quaternion.hpp"
+#include "lightrail/math/vec3.hpp"
 
 namespace lightrail {
 

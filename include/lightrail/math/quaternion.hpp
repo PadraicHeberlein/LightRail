@@ -2,7 +2,9 @@
 
 #include <iosfwd>
 #include <utility>
+
 #include "lightrail/math/algebra_structures.hpp"
+#include "lightrail/math/mat3.hpp"
 #include "lightrail/math/vec3.hpp"
 
 namespace lightrail {
