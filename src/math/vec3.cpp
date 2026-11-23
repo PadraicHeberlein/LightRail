@@ -1,7 +1,8 @@
-#include "lightrail/math/vec3.hpp"
-#include <iostream>
-#include <cmath>
 #include <cassert>
+#include <cmath>
+#include <iostream>
+
+#include "lightrail/math/vec3.hpp"
 
 namespace lightrail {
 
@@ -98,7 +99,8 @@ bool is_parallel(const Vec3& a, const Vec3& b) {
 }
 
 bool is_perpendicular(const Vec3& a, const Vec3& b) {
-    return std::abs(dot(a, b)) < kEpsilon;
+    const double d = dot(a, b);
+    return d * d <= kEpsilon * kEpsilon * a.length_squared() * b.length_squared();
 }
 
 Vec3 reflect(const Vec3& v, const Vec3& normal) {
@@ -119,15 +121,20 @@ Vec3 lerp(const Vec3& a, const Vec3& b, double t) {
 Vec3 random_in_unit_sphere() {
     while (true) {
         Vec3 p(random_double(-1.0, 1.0), random_double(-1.0, 1.0), random_double(-1.0, 1.0));
-        double len_sq = p.length_squared();
-        if (1e-160 < len_sq && len_sq <= 1.0) {
-            return p / std::sqrt(len_sq);
+        if (p.length_squared() < 1.0) {
+            return p;
         }
     }
 }
 
 Vec3 random_unit_vector() {
-    return unit_vector(random_in_unit_sphere());
+    while (true) {
+        Vec3 p = random_in_unit_sphere();
+        double len_sq = p.length_squared();
+        if (len_sq > 1e-160) {
+            return p / std::sqrt(len_sq);
+        }
+    }
 }
 
 Vec3 random_in_unit_disk() {
