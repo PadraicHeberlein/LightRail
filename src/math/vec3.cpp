@@ -1,6 +1,7 @@
 #include "lightrail/math/vec3.hpp"
 #include <iostream>
 #include <cmath>
+#include <cassert>
 
 namespace lightrail {
 
@@ -87,7 +88,9 @@ Vec3 cross(const Vec3& a, const Vec3& b) {
 }
 
 Vec3 unit_vector(const Vec3& v) {
-    return v / v.length();
+    const double len = v.length();
+    assert(len > 0.0 && "Cannot normalize a zero-length Vec3");
+    return v / len;
 }
 
 bool is_parallel(const Vec3& a, const Vec3& b) {
