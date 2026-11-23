@@ -1,48 +1,106 @@
-#include "lightrail/math/quaternion.hpp"
-#include "lightrail/math/mat3.hpp"
 #include <iostream>
 #include <stdexcept>
+#include <cmath>
+
+#include "lightrail/math/quaternion.hpp"
+#include "lightrail/math/mat3.hpp"
 
 namespace lightrail {
 
-Quaternion::Quaternion(double angle_radians, const Vec3& axis) {
-    throw std::logic_error("Not implemented: Quaternion(angle, axis)");
+Quaternion::Quaternion(double angle_radians, const Vec3& axis, double epsilon = kEpsilon) noexcept {
+    const double len_sq = axis.length_squared();
+
+    if (len_sq <= epsilon * epsilon) {
+        w = 1.0;
+        x = 0.0;
+        y = 0.0;
+        z = 0.0;
+        return;
+    }
+
+    const double half_angle = 0.5 * angle_radians;
+    const double s = std::sin(half_angle) / std::sqrt(len_sq);
+
+    w = std::cos(half_angle);
+    x = axis.x * s;
+    y = axis.y * s;
+    z = axis.z * s;
 }
 
+
 Quaternion Quaternion::from_axis_angle(const Vec3& axis, double radians) {
-    throw std::logic_error("Not implemented: Quaternion::from_axis_angle");
+    return Quaternion(radians, axis);
 }
 
 Quaternion Quaternion::from_mat3(const Mat3& m) {
-    throw std::logic_error("Not implemented: Quaternion::from_mat3");
+    const double trace = m(0, 0) + m(1, 1) + m(2, 2);
+
+    if (trace > 0.0) {
+        const double s = std::sqrt(trace + 1.0) * 2.0; // s = 4 * w
+        return Quaternion(
+            0.25 * s,
+            (m(2, 1) - m(1, 2)) / s,
+            (m(0, 2) - m(2, 0)) / s,
+            (m(1, 0) - m(0, 1)) / s
+        );
+    } else if (m(0, 0) > m(1, 1) && m(0, 0) > m(2, 2)) {
+        const double s = std::sqrt(1.0 + m(0, 0) - m(1, 1) - m(2, 2)) * 2.0; // s = 4 * x
+        return Quaternion(
+            (m(2, 1) - m(1, 2)) / s,
+            0.25 * s,
+            (m(0, 1) + m(1, 0)) / s,
+            (m(0, 2) + m(2, 0)) / s
+        );
+    } else if (m(1, 1) > m(2, 2)) {
+        const double s = std::sqrt(1.0 + m(1, 1) - m(0, 0) - m(2, 2)) * 2.0; // s = 4 * y
+        return Quaternion(
+            (m(0, 2) - m(2, 0)) / s,
+            (m(0, 1) + m(1, 0)) / s,
+            0.25 * s,
+            (m(1, 2) + m(2, 1)) / s
+        );
+    } else {
+        const double s = std::sqrt(1.0 + m(2, 2) - m(0, 0) - m(1, 1)) * 2.0; // s = 4 * z
+        return Quaternion(
+            (m(1, 0) - m(0, 1)) / s,
+            (m(0, 2) + m(2, 0)) / s,
+            (m(1, 2) + m(2, 1)) / s,
+            0.25 * s
+        );
+    }
 }
 
 Quaternion Quaternion::operator-() const {
-    throw std::logic_error("Not implemented: Quaternion::operator-");
+    return Quaternion(-w, -x, -y, -z);
 }
 
 Quaternion Quaternion::operator+(const Quaternion& other) const {
-    throw std::logic_error("Not implemented: Quaternion::operator+");
+    return Quaternion(w + other.w, x + other.x, y + other.y, z + other.z);
 }
 
 Quaternion Quaternion::operator-(const Quaternion& other) const {
-    throw std::logic_error("Not implemented: Quaternion::operator-");
+    return Quaternion(w - other.w, x - other.x, y - other.y, z - other.z);
 }
 
 Quaternion Quaternion::operator*(const Quaternion& other) const {
-    throw std::logic_error("Not implemented: Quaternion::operator*(Quaternion)");
+    return Quaternion(
+        w * other.w - x * other.x - y * other.y - z * other.z, 
+        w * other.x + x * other.w + y * other.z - z * other.y,
+        w * other.y - x * other.z + y * other.w + z * other.x,
+        w * other.z + x * other.y - y * other.x + z * other.w
+    );
 }
 
 Quaternion Quaternion::operator/(const Quaternion& other) const {
-    throw std::logic_error("Not implemented: Quaternion::operator/(Quaternion)");
+    return *this * other.inverse();
 }
 
 Quaternion Quaternion::operator*(double s) const {
-    throw std::logic_error("Not implemented: Quaternion::operator*(double)");
+    return Quaternion(w * s, x * s, y * s, z * s);
 }
 
 Quaternion Quaternion::operator/(double s) const {
-    throw std::logic_error("Not implemented: Quaternion::operator/(double)");
+    return Quaternion(w / s, x / s, y / s, z / s);
 }
 
 Quaternion operator*(double s, const Quaternion& q) {
@@ -50,7 +108,7 @@ Quaternion operator*(double s, const Quaternion& q) {
 }
 
 bool Quaternion::operator==(const Quaternion& other) const {
-    throw std::logic_error("Not implemented: Quaternion::operator==");
+    return w == other.w && x == other.x && y == other.y && z == other.z;
 }
 
 bool Quaternion::operator!=(const Quaternion& other) const {
@@ -58,35 +116,54 @@ bool Quaternion::operator!=(const Quaternion& other) const {
 }
 
 double Quaternion::norm() const {
-    throw std::logic_error("Not implemented: Quaternion::norm");
+    return std::sqrt(norm_squared());
 }
 
 double Quaternion::norm_squared() const {
-    throw std::logic_error("Not implemented: Quaternion::norm_squared");
+    return w * w + x * x + y * y + z * z;
 }
 
 Quaternion Quaternion::normalized() const {
-    throw std::logic_error("Not implemented: Quaternion::normalized");
+    const double n = norm();
+    if (n == 0.0) {
+        throw std::invalid_argument("Cannot normalize zero quaternion");
+    }
+    return *this / n;
 }
 
 Quaternion Quaternion::conjugate() const {
-    throw std::logic_error("Not implemented: Quaternion::conjugate");
+    return Quaternion(w, -x, -y, -z);
 }
 
 Quaternion Quaternion::inverse() const {
-    throw std::logic_error("Not implemented: Quaternion::inverse");
+    return conjugate() / norm_squared();
 }
 
 Vec3 Quaternion::rotate(const Vec3& v) const {
-    throw std::logic_error("Not implemented: Quaternion::rotate");
+    const Quaternion q_v(0.0, v.x, v.y, v.z);
+    const Quaternion q_conj = conjugate();
+    const Quaternion result = *this * q_v * q_conj;
+    return Vec3(result.x, result.y, result.z);
 }
 
 Mat3 Quaternion::to_mat3() const {
-    throw std::logic_error("Not implemented: Quaternion::to_mat3");
+    return Mat3(
+        1.0 - 2.0 * (y * y + z * z), 2.0 * (x * y - z * w),     2.0 * (x * z + y * w),
+        2.0 * (x * y + z * w),     1.0 - 2.0 * (x * x + z * z), 2.0 * (y * z - x * w),
+        2.0 * (x * z - y * w),     2.0 * (y * z + x * w),     1.0 - 2.0 * (x * x + y * y)
+    );
 }
 
 std::pair<Vec3, double> Quaternion::to_axis_angle() const {
-    throw std::logic_error("Not implemented: Quaternion::to_axis_angle");
+    const double angle = 2.0 * std::acos(w);
+    const double s = std::sqrt(1.0 - w * w);
+
+    if (s < kEpsilon) {
+        // If s is close to zero, the axis can be any normalized vector
+        return {Vec3(1.0, 0.0, 0.0), angle};
+    } else {
+        return {Vec3(x / s, y / s, z / s), angle};
+    }
 }
 
 std::ostream& operator<<(std::ostream& os, const Quaternion& q) {
@@ -99,7 +176,7 @@ double norm(const Quaternion& q) {
 }
 
 double dot(const Quaternion& a, const Quaternion& b) {
-    throw std::logic_error("Not implemented: dot(Quaternion, Quaternion)");
+    return a.w * b.w + a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
 Quaternion exp(const Quaternion& q) {

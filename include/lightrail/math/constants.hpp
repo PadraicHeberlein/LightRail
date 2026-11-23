@@ -9,7 +9,7 @@ namespace lightrail {
 // Mathematical constants
 inline constexpr double kPi = std::numbers::pi_v<double>;
 inline constexpr double kInfinity = std::numeric_limits<double>::infinity();
-inline constexpr double kEpsilon = 1e-6; // Numerical tolerance for floating-point comparisons
+inline constexpr double kEpsilon = std::numeric_limits<double>::epsilon();
 
 // Common angle constants (in radians)
 inline constexpr double kDeg15 = kPi / 12.0;
