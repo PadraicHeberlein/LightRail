@@ -9,9 +9,7 @@ Ray::Ray(const Point3& origin, const Vec3& direction)
     : origin(origin), direction(direction) {}
 
 Point3 Ray::at(double t) const {
-    // TODO: Implement parametric point evaluation along ray:
-    // return origin + t * direction;
-    throw std::logic_error("Not implemented: Ray::at(t)");
+    return origin + t * direction;
 }
 
 } // namespace lightrail
