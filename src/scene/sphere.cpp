@@ -16,7 +16,7 @@ bool Sphere::hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const
     // 5. Compute discriminant = half_b * half_b - a * c
     // 6. If discriminant < 0, return false
     // 7. Find nearest root in [t_min, t_max]: (-half_b - sqrt(disc)) / a, or (+ root)
-    // 8. Populate rec.t, rec.point = r.at(rec.t), rec.set_face_normal, rec.material = material
+    // 8. Populate rec.t, rec.point = r.at(rec.t), rec.set_face_normal, rec.material = material.get()
     throw std::logic_error("Not implemented: Sphere::hit()");
 }
 

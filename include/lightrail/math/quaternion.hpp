@@ -49,15 +49,15 @@ public:
     bool operator!=(const Quaternion& other) const;
 
     // Geometric & Norm operations
-    double norm() const;
-    double norm_squared() const;
-    Quaternion normalized() const;
-    Quaternion conjugate() const;
-    Quaternion inverse() const;
+    [[nodiscard]] double norm() const;
+    [[nodiscard]] double norm_squared() const;
+    [[nodiscard]] Quaternion normalized() const;
+    [[nodiscard]] Quaternion conjugate() const;
+    [[nodiscard]] Quaternion inverse() const;
 
-    Vec3 rotate(const Vec3& v) const;
-    Mat3 to_mat3() const;
-    std::pair<Vec3, double> to_axis_angle() const;
+    [[nodiscard]] Vec3 rotate(const Vec3& v) const;
+    [[nodiscard]] Mat3 to_mat3() const;
+    [[nodiscard]] std::pair<Vec3, double> to_axis_angle() const;
 
     friend std::ostream& operator<<(std::ostream& os, const Quaternion& q);
 };

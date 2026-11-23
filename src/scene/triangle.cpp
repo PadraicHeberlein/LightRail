@@ -19,7 +19,7 @@ bool Triangle::hit(const Ray& r, double t_min, double t_max, HitRecord& rec) con
     // 8. q = cross(s, edge1)
     // 9. v = f * dot(r.direction, q); if v < 0.0 || (u + v) > 1.0, return false
     // 10. t = f * dot(edge2, q); if t < t_min || t > t_max, return false
-    // 11. Populate rec: rec.t = t, rec.point = r.at(t), rec.set_face_normal, rec.material = material
+    // 11. Populate rec: rec.t = t, rec.point = r.at(t), rec.set_face_normal, rec.material = material.get()
     throw std::logic_error("Not implemented: Triangle::hit() (Möller–Trumbore)");
 }
 

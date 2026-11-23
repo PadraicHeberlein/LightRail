@@ -19,7 +19,9 @@ struct Color {
     constexpr Color(double r, double g, double b) noexcept : r(r), g(g), b(b) {}
     constexpr explicit Color(const Vec3& v) noexcept : r(v.x), g(v.y), b(v.z) {}
 
-    Vec3 to_vec3() const;
+    [[nodiscard]] Vec3 to_vec3() const;
+
+    constexpr bool operator==(const Color&) const noexcept = default;
 
     Color& operator+=(const Color& c);
     Color& operator*=(double s);
@@ -30,7 +32,7 @@ struct Color {
      * @param gamma_correct When true, applies gamma = 2.0 (square root approximation) for display output.
      * @return std::array<uint8_t, 3> containing {red, green, blue} bytes.
      */
-    std::array<uint8_t, 3> to_rgb8(bool gamma_correct = true) const;
+    [[nodiscard]] std::array<uint8_t, 3> to_rgb8(bool gamma_correct = true) const;
 
     // Palette constants
     static constexpr Color black() noexcept { return Color(0.0, 0.0, 0.0); }

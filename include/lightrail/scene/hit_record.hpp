@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include "lightrail/math/ray.hpp"
 #include "lightrail/math/vec3.hpp"
 
@@ -15,8 +14,8 @@ struct HitRecord {
     Point3 point;
     Vec3 normal;
     double t{0.0};
+    const Material* material{nullptr}; // Non-owning observer (owned by Scene geometry)
     bool front_face{true};
-    std::shared_ptr<Material> material;
 
     /**
      * @brief Sets normal vector to always point against incident ray.

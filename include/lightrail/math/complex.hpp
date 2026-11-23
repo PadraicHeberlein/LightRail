@@ -18,14 +18,8 @@ public:
     constexpr Complex(double r, double i) noexcept : r_(r), i_(i) {}
     constexpr Complex(double r) noexcept : r_(r), i_(0.0) {}
 
-    Complex(const Complex&) = default;
-    Complex(Complex&&) noexcept = default;
-    Complex& operator=(const Complex&) = default;
-    Complex& operator=(Complex&&) noexcept = default;
-    ~Complex() = default;
-
-    constexpr double real() const noexcept { return r_; }
-    constexpr double imag() const noexcept { return i_; }
+    [[nodiscard]] constexpr double real() const noexcept { return r_; }
+    [[nodiscard]] constexpr double imag() const noexcept { return i_; }
 
     static constexpr Complex zero() noexcept { return Complex(0.0, 0.0); }
     static constexpr Complex one() noexcept { return Complex(1.0, 0.0); }

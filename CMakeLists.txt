@@ -5,11 +5,28 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Compiler flags for safety and performance
+option(LIGHTRAIL_ENABLE_LTO "Enable Link-Time Optimization (IPO) for Release builds" OFF)
+
+# Compiler flags for safety and performance (Debug vs. Release separated)
 if (MSVC)
-    add_compile_options(/W4 /permissive- /O2 /wd4100)
+    add_compile_options(/W4 /permissive- /wd4100 $<$<CONFIG:Release>:/O2>)
 else()
-    add_compile_options(-Wall -Wextra -Wpedantic -Wno-unused-parameter -O3)
+    add_compile_options(
+        -Wall -Wextra -Wpedantic -Wno-unused-parameter
+        $<$<CONFIG:Debug>:-O0>
+        $<$<CONFIG:Debug>:-g>
+        $<$<CONFIG:Release>:-O3>
+    )
+endif()
+
+if (LIGHTRAIL_ENABLE_LTO)
+    include(CheckIPOSupported)
+    check_ipo_supported(RESULT lto_supported OUTPUT lto_error)
+    if (lto_supported)
+        set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE ON)
+    else()
+        message(WARNING "LTO requested but not supported: ${lto_error}")
+    endif()
 endif()
 
 # Core library source files

@@ -4,14 +4,11 @@
 #include "lightrail/camera/camera.hpp"
 #include "lightrail/image/color.hpp"
 #include "lightrail/material/material.hpp"
-#include "lightrail/math/constants.hpp"
 #include "lightrail/math/vec3.hpp"
 #include "lightrail/render/renderer.hpp"
-#include "lightrail/scene/mesh.hpp"
 #include "lightrail/scene/plane.hpp"
 #include "lightrail/scene/scene.hpp"
 #include "lightrail/scene/sphere.hpp"
-#include "lightrail/scene/triangle.hpp"
 
 using namespace lightrail;
 
@@ -66,8 +63,14 @@ int main() {
         Image image = renderer.render(scene, camera, width, height);
 
         std::cout << "Saving output_render.ppm and output_render.bmp...\n";
-        image.save_ppm_binary("output_render.ppm");
-        image.save_bmp("output_render.bmp");
+        if (!image.save_ppm_binary("output_render.ppm")) {
+            std::cerr << "Failed to write output_render.ppm\n";
+            return 1;
+        }
+        if (!image.save_bmp("output_render.bmp")) {
+            std::cerr << "Failed to write output_render.bmp\n";
+            return 1;
+        }
         std::cout << "Rendering completed successfully!\n";
         return 0;
 

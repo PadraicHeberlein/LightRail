@@ -16,9 +16,9 @@ public:
     Point3 point_on_plane;
     Vec3 normal;
     std::shared_ptr<Material> material;
-    bool checkerboard{false};
     double checker_scale{1.0};
     Color checker_color2{0.2, 0.2, 0.2};
+    bool checkerboard{false};
 
     // Point and normal constructor
     Plane(const Point3& point, const Vec3& normal, std::shared_ptr<Material> mat);

@@ -19,7 +19,7 @@ struct Ray {
      * @brief Computes 3D point along ray at parameter t.
      * Formula: origin + t * direction
      */
-    Point3 at(double t) const;
+    [[nodiscard]] Point3 at(double t) const;
 };
 
 } // namespace lightrail

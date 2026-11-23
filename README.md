@@ -38,8 +38,9 @@ Originally ported from an undergraduate 3D linear algebra library written in C#,
 
 ```text
 LightRail/
-├── CMakeLists.txt                # Builds static library liblightrail_core.a & binaries
-├── README.md                     # Project documentation
+├── CMakeLists.txt                          # Builds static library liblightrail_core.a & binaries
+├── CPP_GAMING_STANDARDS_AND_CONVENTIONS.md # C++20 gaming & graphics engineering standards
+├── README.md                               # Project documentation
 ├── include/
 │   └── lightrail/
 │       ├── camera/camera.hpp     # Perspective camera & defocus blur declarations
@@ -86,6 +87,8 @@ LightRail/
 └── tests/
     └── test_math.cpp             # Math verification unit tests
 ```
+
+See [CPP_GAMING_STANDARDS_AND_CONVENTIONS.md](./CPP_GAMING_STANDARDS_AND_CONVENTIONS.md) for C++20 style, hot-path performance, numerical precision, and concurrency guidelines.
 
 ---
 

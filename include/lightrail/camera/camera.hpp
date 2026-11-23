@@ -42,10 +42,12 @@ public:
      * @param sample_jitter When true, adds uniform sub-pixel jitter in [-0.5, 0.5] for anti-aliasing.
      * @return Generated primary Ray in world space.
      */
-    Ray get_ray(double x, double y, bool sample_jitter = false) const;
+    [[nodiscard]] Ray get_ray(double x, double y, bool sample_jitter = false) const;
 
 private:
-    Vec3 u_, v_, w_;
+    Vec3 u_;
+    Vec3 v_;
+    Vec3 w_;
     Point3 viewport_upper_left_;
     Vec3 viewport_u_;
     Vec3 viewport_v_;

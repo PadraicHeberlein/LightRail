@@ -32,14 +32,14 @@ public:
     static Mat3 from_quaternion(const Quaternion& q);
 
     // Row and column accessors
-    Vec3 row(int r) const;
-    Vec3 col(int c) const;
+    [[nodiscard]] Vec3 row(int r) const;
+    [[nodiscard]] Vec3 col(int c) const;
 
     // Linear algebra operations
-    Mat3 transpose() const;
-    double determinant() const;
-    std::optional<Mat3> inverse() const;
-    Quaternion to_quaternion() const;
+    [[nodiscard]] Mat3 transpose() const;
+    [[nodiscard]] double determinant() const;
+    [[nodiscard]] std::optional<Mat3> inverse() const;
+    [[nodiscard]] Quaternion to_quaternion() const;
 
     // Algebraic arithmetic
     Mat3 operator-() const;

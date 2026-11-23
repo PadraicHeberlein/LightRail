@@ -10,7 +10,9 @@ namespace lightrail {
  */
 class Triangle : public Hittable {
 public:
-    Point3 v0, v1, v2;
+    Point3 v0;
+    Point3 v1;
+    Point3 v2;
     Vec3 normal;
     std::shared_ptr<Material> material;
 

@@ -1,11 +1,10 @@
 #pragma once
 
 #include <type_traits>
-#include <stdexcept>
 #include "lightrail/math/algebra_concepts.hpp"
 #include "lightrail/math/complex.hpp"
-#include "lightrail/math/quaternion.hpp"
 #include "lightrail/math/mat3.hpp"
+#include "lightrail/math/quaternion.hpp"
 
 namespace lightrail {
 
