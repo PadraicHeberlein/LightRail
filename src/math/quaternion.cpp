@@ -6,7 +6,7 @@
 namespace lightrail {
 
 Quaternion::Quaternion(double angle_radians, const Vec3& axis) {
-    throw std::logic_error("Not implemented: Quaternion(angle, axis)");
+    
 }
 
 Quaternion Quaternion::from_axis_angle(const Vec3& axis, double radians) {
