@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 320" width="680" height="320" role="img" aria-label="Lie Algebra so(3), Rotation Group SO(3), and Unit Quaternion Bridge Diagram">
+  <defs>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#059669"/>
+    </marker>
+    <marker id="arrow-purple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#7c3aed"/>
+    </marker>
+  </defs>
+
+  <style>
+    .title { font: 700 16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #0f172a; }
+    .box-title { font: 700 14px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #0f172a; }
+    .label { font: 600 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #1e293b; }
+    .small { font: 500 11.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #475569; }
+    .formula { font: 600 12px "JetBrains Mono", monospace; fill: #1e293b; }
+  </style>
+
+  <rect width="680" height="320" fill="#ffffff"/>
+  <text x="24" y="28" class="title">Lie Algebra so(3), Rotation Group SO(3), &amp; Unit Quaternions</text>
+
+  <!-- Node 1: so(3) -->
+  <rect x="28" y="88" width="180" height="104" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="52" y="114" class="box-title">Lie Algebra so(3)</text>
+  <text x="44" y="138" class="small">Skew-symmetric Mat3</text>
+  <text x="44" y="158" class="formula">&#969;^T = -&#969;</text>
+  <text x="44" y="178" class="small">Tangent space at I</text>
+
+  <!-- Node 2: SO(3) -->
+  <rect x="468" y="88" width="184" height="104" rx="10" fill="#f0fdf4" stroke="#059669" stroke-width="2"/>
+  <text x="492" y="114" class="box-title">Lie Group SO(3)</text>
+  <text x="484" y="138" class="small">3x3 Rotation Mat3</text>
+  <text x="484" y="158" class="formula">R^T R = I, det = +1</text>
+  <text x="484" y="178" class="small">Orientation manifold</text>
+
+  <!-- Node 3: Unit Quaternions -->
+  <rect x="234" y="218" width="212" height="84" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+  <text x="260" y="244" class="box-title">Unit Quaternions (S&#179;)</text>
+  <text x="252" y="266" class="formula">q = (cos &#952;/2, u sin &#952;/2)</text>
+  <text x="252" y="286" class="small">O(1) exp/log &amp; 16-mul compose</text>
+
+  <!-- Top arrows: exp / log between so(3) and SO(3) -->
+  <path d="M 208 118 Q 338 68 462 118" fill="none" stroke="#2563eb" stroke-width="2.4" marker-end="url(#arrow-blue)"/>
+  <text x="278" y="78" class="label" fill="#2563eb">exp_skew_symmetric(&#969;)</text>
+
+  <path d="M 468 158 Q 338 192 214 158" fill="none" stroke="#059669" stroke-width="2.4" marker-end="url(#arrow-green)"/>
+  <text x="278" y="190" class="label" fill="#059669">log_rotation_matrix(R)</text>
+
+  <!-- Bridge arrows to Quaternion -->
+  <line x1="150" y1="192" x2="232" y2="246" stroke="#7c3aed" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow-purple)"/>
+  <text x="74" y="238" class="small">pure quat (0, &#969;/2)</text>
+
+  <line x1="446" y1="248" x2="532" y2="196" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrow-purple)"/>
+  <line x1="524" y1="192" x2="438" y2="244" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrow-purple)"/>
+  <text x="502" y="244" class="small">to_mat3 / from_mat3</text>
+</svg>

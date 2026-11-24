@@ -1,3 +1,12 @@
+/**
+ * @file material.hpp
+ * @brief Surface shading parameters and optical scattering (Blinn-Phong, mirror reflection, dielectric Snell refraction & Schlick Fresnel).
+ *
+ * @image html reflection_refraction.svg "Reflection and Snell's Law Refraction at a Dielectric Interface"
+ *
+ * @see [Ray Tracing in One Weekend: Dielectrics](https://raytracing.github.io/books/RayTracingInOneWeekend.html#dielectrics)
+ * @see [Schlick's Approximation (Wikipedia)](https://en.wikipedia.org/wiki/Schlick%27s_approximation)
+ */
 #pragma once
 
 #include "lightrail/image/color.hpp"
@@ -6,27 +15,34 @@
 
 namespace lightrail {
 
+/// @brief Selects the surface scattering model evaluated by `Material`.
 enum class MaterialType {
-    Phong,       // Diffuse, Blinn-Phong specular, and mirror reflection
-    Dielectric   // Transparent refractive glass/water with Fresnel reflectance
+    Phong,       ///< Diffuse, Blinn-Phong specular, and mirror reflection.
+    Dielectric   ///< Transparent refractive glass/water with Fresnel reflectance.
 };
 
 /**
  * @brief Surface illumination and scattering material parameters.
+ *
+ * Supports opaque Blinn-Phong/mirror surfaces (`MaterialType::Phong`) and transparent
+ * dielectrics governed by Snell's Law and Schlick's Fresnel approximation (`MaterialType::Dielectric`).
+ *
+ * @see [Blinn–Phong Reflection Model (Wikipedia)](https://en.wikipedia.org/wiki/Blinn%E2%80%93Phong_reflection_model)
+ * @see [Refractive Index (Wikipedia)](https://en.wikipedia.org/wiki/Refractive_index)
  */
 struct Material {
     MaterialType type{MaterialType::Phong};
     Color albedo{0.8, 0.8, 0.8};
 
     // Phong parameters
-    double ka{0.1};           // Ambient coefficient
-    double kd{0.7};           // Diffuse coefficient
-    double ks{0.3};           // Specular coefficient
-    double shininess{32.0};   // Specular exponent
-    double reflectivity{0.0}; // Mirror reflection fraction [0.0, 1.0]
+    double ka{0.1};           ///< Ambient reflection coefficient @f$ k_a @f$.
+    double kd{0.7};           ///< Diffuse reflection coefficient @f$ k_d @f$.
+    double ks{0.3};           ///< Specular reflection coefficient @f$ k_s @f$.
+    double shininess{32.0};   ///< Specular highlight exponent @f$ s @f$.
+    double reflectivity{0.0}; ///< Mirror reflection fraction in @f$ [0.0, 1.0] @f$.
 
     // Dielectric parameters
-    double ior{1.5};          // Index of refraction (e.g. 1.0 air, 1.33 water, 1.5 glass, 2.4 diamond)
+    double ior{1.5};          ///< Index of refraction @f$ \eta @f$ (1.0 air, 1.33 water, 1.5 glass, 2.4 diamond).
 
     constexpr Material() noexcept = default;
     constexpr Material(const Color& albedo,
@@ -67,19 +83,27 @@ struct Material {
     }
 
     /**
-     * @brief Evaluates ray scattering (reflection or refraction) off material surface.
+     * @brief Evaluates ray scattering (reflection or refraction) off a material surface.
      * @param r_in Incident ray.
      * @param rec Surface intersection metadata.
-     * @param attenuation Color modulation along scattered path.
+     * @param attenuation Output color modulation along the scattered path.
      * @param scattered Output reflected or refracted ray.
-     * @return true if ray scatters, false if absorbed.
+     * @return `true` if the ray scatters, `false` if absorbed.
+     * @see [Total Internal Reflection (Wikipedia)](https://en.wikipedia.org/wiki/Total_internal_reflection)
      */
     [[nodiscard]] bool scatter(const Ray& r_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const;
 
     /**
      * @brief Computes Schlick's polynomial approximation for Fresnel reflectance.
-     * Formula: R(theta) = R0 + (1 - R0) * (1 - cos(theta))^5
-     * where R0 = ((n1 - n2) / (n1 + n2))^2
+     *
+     * Formula: @f$ R(\theta) = R_0 + (1 - R_0)(1 - \cos\theta)^5 @f$,
+     * where @f$ R_0 = \left(\frac{1 - \eta}{1 + \eta}\right)^2 @f$.
+     *
+     * @param cosine Cosine of the angle between the incident ray and surface normal (@f$ \cos\theta @f$).
+     * @param ref_idx Relative index of refraction @f$ \eta @f$.
+     * @return Fresnel reflectance probability in @f$ [0, 1] @f$.
+     * @see [Schlick's Approximation (Wikipedia)](https://en.wikipedia.org/wiki/Schlick%27s_approximation)
+     * @see [Ray Tracing in One Weekend: Schlick Approximation](https://raytracing.github.io/books/RayTracingInOneWeekend.html#dielectrics/schlickapproximation)
      */
     [[nodiscard]] static double reflectance_schlick(double cosine, double ref_idx);
 };

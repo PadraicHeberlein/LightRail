@@ -212,8 +212,10 @@ Separate **programmer bugs** from **expected runtime failures** and **cold vs. h
 
 ## 10. Documentation & Comments
 
-- **Public Interfaces**: Document all public classes, structs, methods, and free functions with Javadoc-style Doxygen blocks (`/** ... */`) using `@brief`, `@param`, and `@return`.
-- **Mathematical Contracts**: Include formulas (e.g., `v - 2 * dot(v, n) * n`, Schlick's approximation) and preconditions (unit length, domain bounds) directly in the header Doxygen comment.
+- **Public Interfaces**: Document all public classes, structs, methods, and free functions with Javadoc-style Doxygen blocks (`/** ... */`) using `@file`, `@brief`, `@param`, `@return`, and `@pre`.
+- **Mathematical Contracts & MathJax**: Include formulas using Doxygen MathJax syntax (`@f$ \mathbf{P}(t) = \mathbf{O} + t\mathbf{D} @f$`) and preconditions (unit length, domain bounds) directly in header Doxygen blocks.
+- **Educational Links**: Attach authoritative, free references via `@see [Topic Title](https://...)` (e.g., *Ray Tracing in One Weekend*, *PBRT v4*, *Scratchapixel*, *Wikipedia*, *cppreference*) so headers double as a self-contained study guide.
+- **HTML Diagrams**: Store custom geometric/optical SVG diagrams in `docs/diagrams/` and embed them with `@image html <diagram>.svg "Caption"`. Doxygen is configured in `docs/Doxyfile.in` (built via `cmake --build build --target docs`) with MathJax and auto-detected Graphviz DOT (`HAVE_DOT = YES`) for interactive class and dependency graphs.
 - **Implementation Comments**: Explain *why* a choice was made (numerical stability, shadow-acne offset, branchless optimization), not *what* self-evident code already says. Do not duplicate header Doxygen blocks above `.cpp` definitions.
 
 ---
