@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 340" width="680" height="340" role="img" aria-label="Moller-Trumbore Ray-Triangle Intersection Diagram">
+  <defs>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#059669"/>
+    </marker>
+    <marker id="arrow-purple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#7c3aed"/>
+    </marker>
+  </defs>
+
+  <style>
+    .title { font: 700 16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #0f172a; }
+    .label { font: 600 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #1e293b; }
+    .small { font: 500 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #475569; }
+    .formula { font: 600 12px "JetBrains Mono", monospace; fill: #1e293b; }
+  </style>
+
+  <rect width="680" height="340" fill="#ffffff"/>
+  <text x="24" y="28" class="title">M&#246;ller&#8211;Trumbore Ray&#8211;Triangle Intersection &amp; Barycentric Coordinates</text>
+
+  <!-- Triangle fill -->
+  <polygon points="180,275 430,245 275,75" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+
+  <!-- Edge vectors e1 and e2 -->
+  <line x1="180" y1="275" x2="422" y2="246" stroke="#059669" stroke-width="2.8" marker-end="url(#arrow-green)"/>
+  <text x="295" y="282" class="label" fill="#059669">e&#8321; = v&#8321; - v&#8320;</text>
+
+  <line x1="180" y1="275" x2="271" y2="83" stroke="#7c3aed" stroke-width="2.8" marker-end="url(#arrow-purple)"/>
+  <text x="150" y="160" class="label" fill="#7c3aed">e&#8322; = v&#8322; - v&#8320;</text>
+
+  <!-- Vertices -->
+  <circle cx="180" cy="275" r="5" fill="#0f172a"/>
+  <text x="152" y="294" class="label">v&#8320;</text>
+
+  <circle cx="430" cy="245" r="5" fill="#0f172a"/>
+  <text x="440" y="252" class="label">v&#8321;</text>
+
+  <circle cx="275" cy="75" r="5" fill="#0f172a"/>
+  <text x="270" y="63" class="label">v&#8322;</text>
+
+  <!-- Ray piercing triangle -->
+  <line x1="70" y1="150" x2="290" y2="198" stroke="#2563eb" stroke-width="2.6" marker-end="url(#arrow-blue)"/>
+  <circle cx="70" cy="150" r="4" fill="#2563eb"/>
+  <text x="48" y="138" class="label" fill="#2563eb">Ray O + tD</text>
+
+  <!-- Hit point P -->
+  <circle cx="295" cy="199" r="5.5" fill="#dc2626"/>
+  <text x="307" y="195" class="label" fill="#dc2626">P(u, v)</text>
+
+  <!-- Barycentric lines -->
+  <line x1="180" y1="275" x2="295" y2="199" stroke="#dc2626" stroke-width="1.2" stroke-dasharray="4,4"/>
+  <line x1="430" y1="245" x2="295" y2="199" stroke="#dc2626" stroke-width="1.2" stroke-dasharray="4,4"/>
+  <line x1="275" y1="75" x2="295" y2="199" stroke="#dc2626" stroke-width="1.2" stroke-dasharray="4,4"/>
+
+  <!-- Formula card -->
+  <rect x="440" y="60" width="220" height="145" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text x="454" y="84" class="label">Barycentric Constraint</text>
+  <text x="454" y="108" class="formula">P = (1 - u - v)v&#8320;</text>
+  <text x="470" y="126" class="formula">+ u&#183;v&#8321; + v&#183;v&#8322;</text>
+  <text x="454" y="152" class="formula">u &#8805; 0,  v &#8805; 0</text>
+  <text x="454" y="172" class="formula">u + v &#8804; 1</text>
+  <text x="454" y="194" class="small">Solved via Cramer's Rule</text>
+</svg>

@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(LIGHTRAIL_ENABLE_LTO "Enable Link-Time Optimization (IPO) for Release builds" OFF)
+option(LIGHTRAIL_BUILD_DOCS "Enable Doxygen HTML documentation target when Doxygen is installed" ON)
 
 # Compiler flags for safety and performance (Debug vs. Release separated)
 if (MSVC)
@@ -66,3 +67,28 @@ target_link_libraries(test_algebra PRIVATE lightrail_core)
 # Main ray tracer executable
 add_executable(lightrail src/main.cpp)
 target_link_libraries(lightrail PRIVATE lightrail_core)
+
+# Optional Doxygen HTML documentation target (does not add any dependency to lightrail_core)
+if (LIGHTRAIL_BUILD_DOCS)
+    find_package(Doxygen QUIET OPTIONAL_COMPONENTS dot)
+    if (DOXYGEN_FOUND)
+        if (DOXYGEN_DOT_FOUND)
+            set(LIGHTRAIL_DOXYGEN_HAVE_DOT YES)
+        else()
+            set(LIGHTRAIL_DOXYGEN_HAVE_DOT NO)
+        endif()
+
+        set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile.in)
+        set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
+        configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
+
+        add_custom_target(docs
+            COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            COMMENT "Generating LightRail HTML documentation with Doxygen (HAVE_DOT=${LIGHTRAIL_DOXYGEN_HAVE_DOT})"
+            VERBATIM
+        )
+    else()
+        message(STATUS "Doxygen not found; 'docs' target will not be generated.")
+    endif()
+endif()

@@ -1,3 +1,8 @@
+/**
+ * @file complex.hpp
+ * @brief Complex number class @f$ z = r + i\cdot\text{im} \in \mathbb{C} @f$ satisfying Field and NormedAlgebra.
+ * @see [Complex Number (Wikipedia)](https://en.wikipedia.org/wiki/Complex_number)
+ */
 #pragma once
 
 #include <iosfwd>
@@ -6,7 +11,9 @@
 namespace lightrail {
 
 /**
- * @brief Complex number representation satisfying Field and NormedAlgebra.
+ * @brief Complex number representation @f$ z = a + bi @f$ satisfying Field and NormedAlgebra.
+ * @see [Complex Number (Wikipedia)](https://en.wikipedia.org/wiki/Complex_number)
+ * @see [Euler's Formula (Wikipedia)](https://en.wikipedia.org/wiki/Euler%27s_formula)
  */
 class Complex : public FieldInterface<Complex>, public VectorSpaceInterface<Complex, double> {
 private:
@@ -41,10 +48,41 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Complex& c);
 };
 
+/**
+ * @brief Computes the complex modulus @f$ |z| = \sqrt{\text{re}^2 + \text{im}^2} @f$.
+ * @param c Complex number.
+ * @return Euclidean modulus.
+ */
 double norm(const Complex& c);
+
+/**
+ * @brief Computes the complex exponential via Euler's formula: @f$ e^{a + bi} = e^a (\cos b + i\sin b) @f$.
+ * @param c Complex exponent.
+ * @return @f$ e^c @f$.
+ * @see [Euler's Formula (Wikipedia)](https://en.wikipedia.org/wiki/Euler%27s_formula)
+ */
 Complex exp(const Complex& c);
+
+/**
+ * @brief Computes the principal complex natural logarithm: @f$ \ln(z) = \ln|z| + i\,\text{atan2}(\text{im}, \text{re}) @f$.
+ * @param c Non-zero complex number.
+ * @return Principal branch of @f$ \ln(c) @f$.
+ * @see [Complex Logarithm (Wikipedia)](https://en.wikipedia.org/wiki/Complex_logarithm)
+ */
 Complex log(const Complex& c);
+
+/**
+ * @brief Computes the complex sine @f$ \sin(a + bi) = \sin a \cosh b + i \cos a \sinh b @f$.
+ * @param c Complex angle.
+ * @return @f$ \sin(c) @f$.
+ */
 Complex sin(const Complex& c);
+
+/**
+ * @brief Computes the complex cosine @f$ \cos(a + bi) = \cos a \cosh b - i \sin a \sinh b @f$.
+ * @param c Complex angle.
+ * @return @f$ \cos(c) @f$.
+ */
 Complex cos(const Complex& c);
 
 } // namespace lightrail

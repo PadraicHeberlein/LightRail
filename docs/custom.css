@@ -1,0 +1,108 @@
+/* LightRail custom Doxygen HTML stylesheet
+ * Modern typography, clean diagram framing, and dark/light mode support.
+ */
+
+:root {
+    --lr-accent: #2563eb;
+    --lr-accent-soft: #eff6ff;
+    --lr-border: #e2e8f0;
+    --lr-surface: #f8fafc;
+    --lr-text: #1e293b;
+    --lr-muted: #64748b;
+    --lr-code-bg: #f1f5f9;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --lr-accent: #60a5fa;
+        --lr-accent-soft: #1e293b;
+        --lr-border: #334155;
+        --lr-surface: #0f172a;
+        --lr-text: #e2e8f0;
+        --lr-muted: #94a3b8;
+        --lr-code-bg: #1e293b;
+    }
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+    line-height: 1.65;
+}
+
+code, pre, .fragment {
+    font-family: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+#projectlogo img {
+    max-height: 54px;
+    border-radius: 8px;
+    margin-right: 10px;
+}
+
+/* Custom SVG diagram containers */
+.image {
+    margin: 1.25rem 0;
+    text-align: center;
+}
+
+.image img,
+.image object,
+.image svg {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--lr-border);
+    border-radius: 10px;
+    background: #ffffff;
+    padding: 12px;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+
+.image .caption {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--lr-muted);
+    font-style: italic;
+}
+
+/* Educational "See also" link cards */
+dl.section.see {
+    border-left: 4px solid var(--lr-accent);
+    background-color: var(--lr-accent-soft);
+    padding: 0.65rem 1rem;
+    border-radius: 0 8px 8px 0;
+    margin: 0.85rem 0;
+}
+
+dl.section.see dt {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+dl.section.see dd a {
+    color: var(--lr-accent);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+dl.section.see dd a:hover {
+    text-decoration: underline;
+}
+
+/* Precondition and note callouts */
+dl.section.pre,
+dl.section.note {
+    border-left: 4px solid #0ea5e9;
+    background-color: var(--lr-surface);
+    padding: 0.6rem 1rem;
+    border-radius: 0 8px 8px 0;
+    margin: 0.75rem 0;
+}
+
+/* Member documentation cards */
+.memproto {
+    border-radius: 8px 8px 0 0;
+}
+
+.memdoc {
+    border-radius: 0 0 8px 8px;
+}

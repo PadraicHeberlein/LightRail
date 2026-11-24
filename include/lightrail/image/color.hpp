@@ -1,3 +1,9 @@
+/**
+ * @file color.hpp
+ * @brief Linear floating-point RGB color representation and gamma-corrected 8-bit display conversion.
+ * @see [Gamma Correction (Wikipedia)](https://en.wikipedia.org/wiki/Gamma_correction)
+ * @see [Ray Tracing in One Weekend: Using Gamma Correction for Accurate Color Intensity](https://raytracing.github.io/books/RayTracingInOneWeekend.html#diffusematerials/usinggammacorrectionforaccuratecolorintensity)
+ */
 #pragma once
 
 #include <array>
@@ -7,8 +13,12 @@
 namespace lightrail {
 
 /**
- * @brief Floating-point RGB color representation.
- * Components r, g, b typically reside in [0.0, 1.0] for standard dynamic range.
+ * @brief Floating-point linear RGB color representation.
+ *
+ * Components `r`, `g`, `b` typically reside in @f$ [0.0, 1.0] @f$ for standard dynamic range (SDR).
+ * Arithmetic is performed in linear light space prior to display gamma encoding.
+ *
+ * @see [sRGB and Linear Color Space (Wikipedia)](https://en.wikipedia.org/wiki/SRGB)
  */
 struct Color {
     double r{0.0};
@@ -28,9 +38,11 @@ struct Color {
     Color& operator*=(const Color& c);
 
     /**
-     * @brief Converts linear floating-point color to gamma-corrected 8-bit RGB integers in [0, 255].
-     * @param gamma_correct When true, applies gamma = 2.0 (square root approximation) for display output.
-     * @return std::array<uint8_t, 3> containing {red, green, blue} bytes.
+     * @brief Converts linear floating-point color to gamma-corrected 8-bit RGB integers in @f$ [0, 255] @f$.
+     * @param gamma_correct When true, applies @f$ c^{1/2} = \sqrt{c} @f$ (@f$ \gamma = 2.0 @f$ approximation) for display output.
+     * @return `std::array<uint8_t, 3>` containing `{red, green, blue}` bytes.
+     * @see [Gamma Correction (Wikipedia)](https://en.wikipedia.org/wiki/Gamma_correction)
+     * @see [Ray Tracing in One Weekend: Gamma Correction](https://raytracing.github.io/books/RayTracingInOneWeekend.html#diffusematerials/usinggammacorrectionforaccuratecolorintensity)
      */
     [[nodiscard]] std::array<uint8_t, 3> to_rgb8(bool gamma_correct = true) const;
 
@@ -46,6 +58,10 @@ struct Color {
 Color operator+(const Color& c1, const Color& c2);
 Color operator*(double s, const Color& c);
 Color operator*(const Color& c, double s);
-Color operator*(const Color& c1, const Color& c2); // Hadamard modulation
+
+/**
+ * @brief Component-wise (Hadamard) color modulation @f$ (r_1 r_2, g_1 g_2, b_1 b_2) @f$, modeling spectral surface reflectance.
+ */
+Color operator*(const Color& c1, const Color& c2);
 
 } // namespace lightrail
