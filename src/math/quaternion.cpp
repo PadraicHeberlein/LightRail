@@ -29,7 +29,6 @@ Quaternion::Quaternion(double angle_radians, const Vec3& axis, double epsilon) n
     z = axis.z * s;
 }
 
-
 Quaternion Quaternion::from_axis_angle(const Vec3& axis, double radians) {
     return Quaternion(radians, axis);
 }
@@ -102,6 +101,10 @@ Quaternion Quaternion::operator*(double s) const {
 }
 
 Quaternion Quaternion::operator/(double s) const {
+    if (s == 0.0) {
+        throw std::invalid_argument("Cannot divide quaternion by zero");
+    }
+
     return Quaternion(w / s, x / s, y / s, z / s);
 }
 
@@ -138,16 +141,20 @@ Quaternion Quaternion::conjugate() const {
 }
 
 Quaternion Quaternion::inverse() const {
-    return conjugate() / norm_squared();
+    const double n_sq = norm_squared();
+    if (n_sq == 0.0) {
+        throw std::invalid_argument("Cannot invert zero quaternion");
+    }
+
+    return conjugate() / n_sq;
 }
 
 Vec3 Quaternion::rotate(const Vec3& v) const {
-    const Quaternion q_v(0.0, v.x, v.y, v.z);
-    const Quaternion q_conj = conjugate();
-    const Quaternion result = *this * q_v * q_conj;
-    return Vec3(result.x, result.y, result.z);
+    const Vec3 u(x, y, z);
+    const Vec3 t = 2.0 * cross(u, v);
+    
+    return v + w * t + cross(u, t);
 }
-
 Mat3 Quaternion::to_mat3() const {
     return Mat3(
         1.0 - 2.0 * (y * y + z * z), 2.0 * (x * y - z * w),     2.0 * (x * z + y * w),
@@ -157,19 +164,20 @@ Mat3 Quaternion::to_mat3() const {
 }
 
 std::pair<Vec3, double> Quaternion::to_axis_angle() const {
-    const double angle = 2.0 * std::acos(w);
-    const double s = std::sqrt(1.0 - w * w);
-
-    if (s < kEpsilon) {
-        // If s is close to zero, the axis can be any normalized vector
-        return {Vec3(1.0, 0.0, 0.0), angle};
-    } else {
-        return {Vec3(x / s, y / s, z / s), angle};
+    const double v_len = std::sqrt(x * x + y * y + z * z);
+    if (v_len < kEpsilon) {
+        return {Vec3(1.0, 0.0, 0.0), 0.0};
     }
+    const double sign = (w < 0.0) ? -1.0 : 1.0;
+    const double angle = 2.0 * std::atan2(v_len, sign * w);
+    const double inv_len = sign / v_len;
+
+    return {Vec3(x * inv_len, y * inv_len, z * inv_len), angle};
 }
 
 std::ostream& operator<<(std::ostream& os, const Quaternion& q) {
     os << "Quaternion(" << q.w << ", " << q.x << ", " << q.y << ", " << q.z << ")";
+
     return os;
 }
 
