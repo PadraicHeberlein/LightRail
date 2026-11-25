@@ -90,10 +90,10 @@ public:
     [[nodiscard]] Quaternion inverse() const;
 
     /**
-     * @brief Rotates a 3D vector @p v via the sandwich product @f$ \mathbf{v}' = q (0, \mathbf{v}) q^{-1} @f$.
+     * @brief Rotates a 3D vector @p v via the unit-quaternion sandwich product @f$ \mathbf{v}' = q (0, \mathbf{v}) q^* @f$.
      * @param v 3D vector to rotate.
      * @return Rotated 3D vector.
-     * @pre This quaternion should be unit-length for rigid rotations.
+     * @pre This quaternion must be unit-length (@f$ \|q\| = 1 @f$).
      */
     [[nodiscard]] Vec3 rotate(const Vec3& v) const;
 
